@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Wisieilec.API.Data;
 using Wisieilec.Data.Entities;
@@ -8,15 +11,20 @@ using Wisieilec.Dtos;
 
 namespace Wisieilec.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GameController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public GameController(DataContext context)
+        public GameController(
+            DataContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/game/5/status
@@ -50,10 +58,13 @@ namespace Wisieilec.Controllers
             });
         }
 
-        // POST: api/game/5/user/2:guessLetter
-        [HttpPost("{gameId}/user/{userId}:guessLetter")]
-        public async Task<ActionResult<GameStatusDto>> GuessLetter(int gameId, int userId, GuessLetterDto guessLetterDto)
+        // POST: api/game/5:guessLetter
+        [HttpPost("{gameId}:guessLetter")]
+        public async Task<ActionResult<GameStatusDto>> GuessLetter(int gameId, GuessLetterDto guessLetterDto)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+
             var game = await GetGame(gameId);
             if (game == null || game.Lobby.Status == LobbyStatus.Finished)
             {
@@ -81,9 +92,11 @@ namespace Wisieilec.Controllers
         }
 
         // POST: api/game/5/user/2:guessWord
-        [HttpPost("{gameId}/user/{userId}:guessWord")]
-        public async Task<ActionResult<GameStatusDto>> GuessWord(int gameId, int userId, GuessWordDto guessWordDto)
+        [HttpPost("{gameId}:guessWord")]
+        public async Task<ActionResult<GameStatusDto>> GuessWord(int gameId, GuessWordDto guessWordDto)
         {
+            var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
             var game = await GetGame(gameId);
             if (game == null)
             {

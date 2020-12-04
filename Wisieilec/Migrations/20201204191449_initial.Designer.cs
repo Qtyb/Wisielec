@@ -9,8 +9,8 @@ using Wisieilec.API.Data;
 namespace Wisieilec.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201119205840_Games_add")]
-    partial class Games_add
+    [Migration("20201204191449_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,6 +65,20 @@ namespace Wisieilec.Migrations
                     b.ToTable("Lobbies");
                 });
 
+            modelBuilder.Entity("Wisieilec.Data.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("Wisieilec.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -74,18 +88,26 @@ namespace Wisieilec.Migrations
                     b.Property<int?>("LobbyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Nickname")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("BLOB");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("TEXT");
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalScore")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LobbyId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -127,6 +149,12 @@ namespace Wisieilec.Migrations
                     b.HasOne("Wisieilec.Data.Entities.Lobby", "Lobby")
                         .WithMany("Users")
                         .HasForeignKey("LobbyId");
+
+                    b.HasOne("Wisieilec.Data.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
