@@ -80,11 +80,16 @@ namespace Wisieilec.Controllers
             return CreatedAtAction("GetLobby", new { id = lobby.Id }, lobby);
         }
 
+        // POST: /api/Lobbies/4:start
         [HttpPost("{lobbyId}:start")]
-        public async Task<ActionResult<Lobby>> StartLobby(int lobbyId)
+        public async Task<ActionResult<int>> StartLobby(int lobbyId)
         {
-            //CHECK LOBBY STATUS BEFORE STARTING
             var lobby = await _context.Lobbies.FirstOrDefaultAsync(l => l.Id == lobbyId);
+            if (lobby.Status == LobbyStatus.Finished)
+            {
+                return NotFound();
+            }
+
             lobby.Status = LobbyStatus.Pending;
 
             int total = _context.Words.Count();
@@ -103,7 +108,7 @@ namespace Wisieilec.Controllers
             _context.Set<Game>().Add(game);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(game.Id);
         }
 
         // DELETE: api/Lobbies/5

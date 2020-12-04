@@ -19,6 +19,7 @@ namespace Wisieilec.Controllers
             _context = context;
         }
 
+        // GET: api/game/5/status
         [HttpGet("{gameId}/status")]
         public async Task<ActionResult<GameStatusDto>> GetStatus(int gameId)
         {
@@ -49,11 +50,12 @@ namespace Wisieilec.Controllers
             });
         }
 
+        // POST: api/game/5/user/2:guessLetter
         [HttpPost("{gameId}/user/{userId}:guessLetter")]
         public async Task<ActionResult<GameStatusDto>> GuessLetter(int gameId, int userId, GuessLetterDto guessLetterDto)
         {
             var game = await GetGame(gameId);
-            if (game == null)
+            if (game == null || game.Lobby.Status == LobbyStatus.Finished)
             {
                 return NotFound();
             }
@@ -78,6 +80,7 @@ namespace Wisieilec.Controllers
             return await GetStatus(gameId);
         }
 
+        // POST: api/game/5/user/2:guessWord
         [HttpPost("{gameId}/user/{userId}:guessWord")]
         public async Task<ActionResult<GameStatusDto>> GuessWord(int gameId, int userId, GuessWordDto guessWordDto)
         {
