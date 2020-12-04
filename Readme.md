@@ -24,5 +24,13 @@ This should create database file with name `Wisielec.db`
 ### Database program
 SQLite Db Browser https://sqlitebrowser.org/dl/
 
+## TESTS
+### SETUP
+- Configure `appsettings.json` value `ConnectionStrings:TestConnection`
+- Build solution (Visual Studio: ctrl + shift + b)
+- Run application from CLI
+- Run tests
+- Enjoy :)
+
 
 

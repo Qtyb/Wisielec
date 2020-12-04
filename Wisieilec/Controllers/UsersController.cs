@@ -35,7 +35,7 @@ namespace Wisieilec.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            _logger.LogError("DZIALAŁAMASMD<ASMDKLSAMDLKASM");
+            _logger.LogInformation("Invoked UsersController.Register");
 
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
 
@@ -57,6 +57,8 @@ namespace Wisieilec.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            _logger.LogInformation("Invoked UsersController.Login");
+
             var userFromRepo = await Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
 
             if (userFromRepo == null)

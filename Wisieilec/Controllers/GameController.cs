@@ -62,9 +62,6 @@ namespace Wisieilec.Controllers
         [HttpPost("{gameId}:guessLetter")]
         public async Task<ActionResult<GameStatusDto>> GuessLetter(int gameId, GuessLetterDto guessLetterDto)
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-
             var game = await GetGame(gameId);
             if (game == null || game.Lobby.Status == LobbyStatus.Finished)
             {
